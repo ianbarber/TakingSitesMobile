@@ -1,7 +1,31 @@
+.grid_16, .container_16,
+.grid_14, .container_14,
+.grid_11, .grid_5
+ {
+	width: 100% !important;
+}
+
+.grid_5, .grid_1, 
+.rasterize, .menu-bg {
+	display: none;
+}
+
+.ticker * {
+	display: none;
+}
+
 table tr {
 	display: block;
+	height: auto !important;
 }
 
 table tr td {
 	display: block;
+	width: 96% !important;
+	margin: 1% !important;
+	padding: 1% !important;
+}
+
+td.talk {
+	height: 55px;
 }
