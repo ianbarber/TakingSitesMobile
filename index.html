@@ -1,0 +1,234 @@
+<html>
+<head>
+        <title>Teaplane's Thinktest</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width; initial-scale=1.0" / >
+    	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    	<style>
+    	    @media all {
+    	        #gameboard {
+        	        margin: 10px 30px 10px 30px;
+        	    }
+    	    
+        	    #gameboard .imcon {
+        	        background: gray;
+        	        margin: 10px;
+        	        width: 60px;
+        	        height: 60px;
+        	        cursor: pointer;
+                    -webkit-border-radius: .5em;
+                    -moz-border-radius: .5em;
+                    border-radius: .5em;
+                    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.5);
+                    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.5);
+                    box-shadow: 0 1px 2px rgba(0,0,0,.5);
+                    z-index: 2;
+                    float: left;
+                    text-align: center;
+                
+        	    }
+    	    
+        	    #gameboard .imcon img {
+        	        margin-top: 5px;   
+        	    }
+    	    
+        	    #user-info {
+        	        margin: 10px;
+    	        
+        	    }
+    	    
+        	    #boxbutton {
+        	        margin: 10px;
+        	    }
+    	    
+        	    span#msg {
+        	        font-size: 3em;
+        	        font-style: italic;
+        	        color: red;
+        	        display: block;
+        	        text-align: center;
+        	        text-shadow: #CCDDDD 4px -4px 1px;
+        	    }
+	        }
+    	    
+    	    
+    	    @media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    	        #gameboard {
+                    margin: 10px 8px 10px 8px;
+                }
+                
+                #gameboard .imcon {
+                    margin: 5px;
+                }
+            }
+    	</style>
+</head>
+<body onload="setTimeout(function() { window.scrollTo(0, 1) }, 100);">
+    <div id="user-info"></div>
+    <div id="boxbutton">
+        <span class="link">
+            <span id="count">0</span>
+            Clicks
+        </span>
+        &nbsp;
+        <a href="javascript:" class="link" onclick="resetGame();">Reset</a>
+    </div>
+    <div id="gameboard"></div>
+    <div id="fb-root"></div>
+    <script type="text/javascript">
+        var boxopened = "";
+        var imgopened = "";
+        var count = 0;
+        var found =  0;
+        var tofind = 20;
+        
+        if( ((window.innerWidth > 0) ? window.innerWidth : screen.width) <= 480 ) {
+            tofind = 12;
+        }
+
+        function resetGame() {
+            getUserFriends();
+            $("img").hide();
+            $("img").removeClass("opacity");
+            count = 0;
+            $("#msg").remove();
+            $("#count").html("" + count);
+            boxopened = "";
+            imgopened = "";
+            found = 0;
+            return false;
+        }
+        
+        function openCard() {
+            id = $(this).attr("id");
+
+            if ($("#"+id+" img").is(":hidden")) {
+                $("#gameboard div").unbind("click", openCard);
+
+                $("#"+id+" img").slideDown('fast');
+
+                if (imgopened == "") {
+                    boxopened = id;
+                    imgopened = $("#"+id+" img").attr("src");
+                    setTimeout(function() {
+                        $("#gameboard div").bind("click", openCard)
+                    }, 300);
+                } else {
+                    currentopened = $("#"+id+" img").attr("src");
+                    if (imgopened != currentopened) {
+                        // close again
+                        setTimeout(function() {
+                            $("#"+id+" img").slideUp('fast');
+                            $("#"+boxopened+" img").slideUp('fast');
+                            boxopened = "";
+                            imgopened = "";
+                        }, 400);
+                    } else {
+                        // found
+                        $("#"+id+" img").addClass("opacity");
+                        $("#"+boxopened+" img").addClass("opacity");
+                        found++;
+                        boxopened = "";
+                        imgopened = "";
+                    }
+
+                    setTimeout(function() {
+                        $("#gameboard div").bind("click", openCard)
+                    }, 400);
+                }
+
+                count++;
+                $("#count").html("" + count);
+
+                if (found == tofind) {
+                    msg = '<span id="msg">Winnar! </span>';
+                    $("span.link").prepend(msg);
+                }
+            }
+        }
+
+        function getUserFriends() {
+            FB.api('/me/friends&fields=name,picture',
+            function(response) {
+                console.log('Got friends: ', response);
+
+                if (!response.error) {
+                    var markup = new Array()
+
+                    var friends = response.data;
+                    
+                    friends.sort(function() {
+                        return (Math.round(Math.random())-0.5); });
+                    
+                    for (var i=0; i < friends.length && i < tofind; i++) {
+                        var friend = friends[i];
+                        markup.push('<div id="im' + i + '" class="imcon"><img src="' + friend.picture + '"></div>');
+                        markup.push('<div id="im2' + i + '" class="imcon"><img src="' + friend.picture + '"></div>');
+                    }
+                    
+                    markup.sort(function() {
+                        return (Math.round(Math.random())-0.5); });
+                        
+                    document.getElementById('gameboard').innerHTML = markup.join("\n");
+
+        			startGame();
+                }
+            });
+        }
+
+        function updateUserInfo(response) {
+            FB.api('/me',
+            function(response) {
+                //document.getElementById('user-info').innerHTML = '<img src="https://graph.facebook.com/' + response.id + '/picture">' + response.name;
+            });
+            getUserFriends();
+        }
+        
+        function startGame() {
+            $("#gameboard img").hide();
+            $("#gameboard div").click(openCard);
+        }
+        
+        function handleStatusChange(response) {
+            document.body.className = response.authResponse ? 'connected': 'not_connected';
+
+            if (response.authResponse) {
+                console.log(response);
+                updateUserInfo(response);
+            }
+        }
+
+        // Load the SDK Asynchronously
+         (function(d) {
+            var js,
+            id = 'facebook-jssdk',
+            ref = d.getElementsByTagName('script')[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement('script');
+            js.id = id;
+            js.async = true;
+            js.src = "//connect.facebook.net/en_US/all.js";
+            ref.parentNode.insertBefore(js, ref);
+        } (document));
+        
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '147701958604527',
+                // App ID
+                channelUrl: '//teaplane.com/fb/channel.html',
+                // Channel File
+                status: true,
+                // check login status
+                cookie: true,
+                // enable cookies to allow the server to access the session
+                xfbml: true
+                // parse XFBML
+            });
+
+            FB.Event.subscribe('auth.statusChange', handleStatusChange);
+        };
+    </script>
+</body>
+</html>
