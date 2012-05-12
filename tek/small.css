@@ -1,12 +1,42 @@
 .grid_16, .container_16,
 .grid_14, .container_14,
-.grid_11, .grid_5, .grid_4
+.grid_11, .grid_5, .grid_4,
+.container_16 .grid_6
  {
 	width: 100% !important;
 }
 
+.main_border {
+	border-width: 2px;
+	margin-top: 0px;
+}
+
+
+.logo-bg {
+	background-position: -65px 0px;
+	position: static;
+	width: 98%;
+	top: 0px;
+	margin-left: 0px;
+	height: 191px;
+}
+
+
+#header {
+    height: auto;    
+}
+
+
+.teklogo, .talk_box, .ticker {
+	display: none;
+}
+
+.left-hand .content {
+	margin: 5px;
+}
+
 .grid_5, .grid_1, 
-.rasterize, .menu-bg {
+.rasterize, .menu-bg, #menu-bar {
 	display: none;
 }
 
@@ -17,6 +47,7 @@
 .grid_4 {
 	margin-left: 10px;
 	display: block;
+	float: none;
 }
 
 .footer {
@@ -27,6 +58,14 @@
 .footer .byline {
 	position: relative !important;
 	left: 0 !important;
+}
+
+#global-top-bar {
+	font-size: 9px;
+}
+
+#schedule tr.mainheader {
+	border: 0px;
 }
 
 table tr {
@@ -42,5 +81,47 @@ table tr td {
 }
 
 td.talk {
-	height: 55px;
+	min-height: 55px;
+}
+
+.footer .box-4 {
+	margin-bottom: 5px;
+	margin-right: 5px;
+	margin-left: 5px;
+	height: auto;
+	width: 100%;
+}
+
+.footer .box-4 h1 {
+	background-color: #ABABAB;
+	line-height: 50px;
+	padding-left: 1%;
+	width: 98%;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.footer .box-4 ul li a {
+	display: block;
+	background-color: #333333;
+	line-height: 30px;
+	padding-left: 1%;
+	width: 98%;
+}
+
+
+.byline_container {
+    float: none;    
+	display: block;
+	margin-bottom: 30px;
+}
+
+.footer .byline {
+    padding-right: 0px;    
+}
+
+.footer .colophon {
+    position: static;
+	float: none;
+	width: 100% !important;	
 }
